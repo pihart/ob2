@@ -4,7 +4,8 @@ import time
 
 import ob2.config as config
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
+LOG.setLevel(logging.DEBUG)
 
 
 def _get_github_admin():
