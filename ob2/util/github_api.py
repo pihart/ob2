@@ -117,7 +117,7 @@ def _assign_repo(repo_name, members=[]):
                 c = repo._put(url)
 
             assert c.status_code == 201 or c.status_code == 204, \
-                "Unable to add member %s to %s" % (repr(member), repr(fq_repo_name))
+                "Unable to add member %s to %s due to status code %d" % (repr(member), repr(fq_repo_name), c.status_code)
 
 
 def _resend_invites(repo_name, members=[]):
@@ -137,7 +137,7 @@ def _resend_invites(repo_name, members=[]):
             url = repo._build_url('collaborators', member, base_url=repo._api)
             c = repo._put(url)
             assert c.status_code == 201 or c.status_code == 204, \
-                "Unable to add member %s to %s" % (repr(member), repr(repo_name))
+                "Unable to add member %s to %s due to status code %d" % (repr(member), repr(repo_name), c.status_code)
 
 
 class GitHubTransactionError(Exception):
