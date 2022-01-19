@@ -4,7 +4,7 @@ root_logger = logging.getLogger()
 formatter = logging.Formatter("%(levelname)-.1s[%(asctime)s][%(name)s] %(message)s")
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(formatter)
-root_logger.setLevel(logging.INFO)
+root_logger.setLevel(logging.DEBUG)
 root_logger.addHandler(console_handler)
 
 # Validates presence of required packages and package version numbers
