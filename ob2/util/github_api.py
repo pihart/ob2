@@ -1,4 +1,5 @@
 import github3
+import time
 
 import ob2.config as config
 
@@ -80,7 +81,7 @@ def _assign_repo(repo_name, members=[]):
             assert repo, "Unable to get repository object for GitHub (check API key permissions?)"
         else:
             raise
-
+    
     collaborators = {user.login for user in repo.iter_collaborators()}
 
     for member in members:
@@ -108,6 +109,13 @@ def _assign_repo(repo_name, members=[]):
             assert member is not None, "Trying to add None member as collaborator!"
             url = repo._build_url('collaborators', member, base_url=repo._api)
             c = repo._put(url)
+
+            # Repo invites occasionally fail. Currently not sure what hte issue
+            # is, but this is an attempt to retry in case it fails.
+            if c.status_code == 404:
+                time.sleep(1)
+                c = repo._put(url)
+
             assert c.status_code == 201 or c.status_code == 204, \
                 "Unable to add member %s to %s" % (repr(member), repr(fq_repo_name))
 
