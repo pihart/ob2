@@ -109,6 +109,7 @@ def _assign_repo(repo_name, members=[]):
             #
             # Until then, I have implemented this TERRIBLE UGLY workaround that
             # at least gives us correct behavior.
+            LOG.debug("Trying to add %s to %s" % ((repr(member), repr(fq_repo_name))))
             assert member is not None, "Trying to add None member as collaborator!"
             url = repo._build_url('collaborators', member, base_url=repo._api)
             c = repo._put(url)
@@ -116,7 +117,7 @@ def _assign_repo(repo_name, members=[]):
             # Repo invites occasionally fail. Currently not sure what hte issue
             # is, but this is an attempt to retry in case it fails.
             if c.status_code == 404:
-                LOG.info("Received 404 when inviting %s to %s, retrying after one second ..." % (repr(member), repr(fq_repo_name)))
+                LOG.debug("Received 404 when inviting %s to %s, retrying after one second ..." % (repr(member), repr(fq_repo_name)))
                 time.sleep(1)
                 c = repo._put(url)
 
