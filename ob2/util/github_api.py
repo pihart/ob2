@@ -1,7 +1,10 @@
 import github3
+import logging
 import time
 
 import ob2.config as config
+
+LOG = logging.getLogger()
 
 
 def _get_github_admin():
@@ -113,6 +116,7 @@ def _assign_repo(repo_name, members=[]):
             # Repo invites occasionally fail. Currently not sure what hte issue
             # is, but this is an attempt to retry in case it fails.
             if c.status_code == 404:
+                LOG.info("Received 404 when inviting %s to %s, retrying after one second ..." % (repr(member), repr(fq_repo_name)))
                 time.sleep(1)
                 c = repo._put(url)
 
