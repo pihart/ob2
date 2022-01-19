@@ -2,9 +2,12 @@ import github3
 import logging
 import time
 
+from systemd.journal import JournalHandler
+
 import ob2.config as config
 
 LOG = logging.getLogger(__name__)
+LOG.addHandler(JournalHandler())
 LOG.setLevel(logging.DEBUG)
 
 
