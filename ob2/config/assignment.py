@@ -5,6 +5,7 @@ class AssignmentStudentView(object):
     def __init__(self, login, assignment, exceptions=None):
         self.login = login
         self.assignment = assignment
+        self.exceptions = exceptions
 
     def __getattr__(self, key):
         if self.exceptions is not None:
