@@ -9,9 +9,8 @@ class AssignmentStudentView(object):
 
     def __getattr__(self, key):
         if self.exceptions is not None:
-            for exception in self.exceptions:
-                if key in exception:
-                    return exception[key]
+            if key in self.exceptions:
+                return self.exceptions[key]
         return getattr(self.assignment, key)
 
 class Assignment(object):
