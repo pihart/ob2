@@ -106,7 +106,7 @@ def migrate():
         # Migration 10: Create extensions table
         if schema_version == "9":
             print("Running migration 10: Create extensions table")
-            c.execute("CREATE TABLE extensions (extension_id INT PRIMARY KEY, user INT, assignment TEXT, days INT)")
+            c.execute("CREATE TABLE extensions (extension_id INT PRIMARY KEY, user TEXT, assignment TEXT, days INT)")
             c.execute("UPDATE options SET value = '10' WHERE key = 'schema_version'")
             schema_version = "10"
 

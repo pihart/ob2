@@ -68,7 +68,7 @@ class Assignment(object):
         c.execute("SELECT days FROM extensions WHERE user = ? AND assignment = ?", [login, self.name])
         extensions = c.fetchall()
         max_days = 0
-        for days in extensions:
+        for (days,) in extensions:
             max_days = max(max_days, int(days))
 
         extend_by = timedelta(days=max_days)
@@ -80,10 +80,9 @@ class Assignment(object):
         end_auto_building = parse_time(self.end_auto_building) + extend_by
         cannot_build_after = parse_time(self.cannot_build_after) + extend_by
         
-        time_format = "%b %-d %-I:%-M%p"
-        exceptions["due_date"] = due_date.strftime(time_format)
-        exceptions["end_auto_building"] = end_auto_building.strftime(time_format)
-        exceptions["cannot_build_after"] = cannot_build_after.strftime(time_format)
+        exceptions["due_date"] = due_date
+        exceptions["end_auto_building"] = end_auto_building
+        exceptions["cannot_build_after"] = cannot_build_after
 
         return AssignmentStudentView(login, self, exceptions=exceptions)
 
