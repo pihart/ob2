@@ -43,6 +43,7 @@ for blueprint in ("onboarding",
                   "dashboard",
                   "ta",
                   "pushhook",
+                  "extensions",
                   "api"):
     module = import_module("ob2.web.blueprints.%s" % blueprint)
     app.register_blueprint(module.blueprint, url_prefix=config.web_public_root)

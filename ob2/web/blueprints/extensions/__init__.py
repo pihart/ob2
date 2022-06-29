@@ -33,7 +33,7 @@ def extensions():
         assert isinstance(assignment, str)
 
         with DbCursor() as c:
-            c.execute("SELECT sid FROM users WHERE login = ?")
+            c.execute("SELECT sid FROM users WHERE login = ?", [login])
             (db_sid,) = c.fetchone()
 
             if sid != db_sid:
@@ -43,7 +43,11 @@ def extensions():
             c.execute("SELECT last_insert_rowid()")
             (extension_id,) = c.fetchone()
 
-        return ('', 201)
+        res = {}
+        res["status"] = "OK"
+        res["id"] = extension_id
+
+        return (res, 201)
     except Exception:
         logging.exception("Error occurred while processing create extension request payload")
         abort(500)
