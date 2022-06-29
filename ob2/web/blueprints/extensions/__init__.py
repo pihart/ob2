@@ -22,25 +22,28 @@ def extensions():
         payload = json.loads(payload_bytes)
         assert isinstance(payload, dict)
 
+        sid = payload["sid"]
         days = int(payload["days"])
         login = payload["login"]
+        assignment = payload["assignment"]
 
+        assert isinstance(sid, str)
         assert isinstance(days, int)
         assert isinstance(login, str)
+        assert isinstance(assignment, str)
 
-        while True:
-            try:
-                with DbCursor() as c:
-                    build_name = create_build(c, job_to_run, repo_name, after, message)
-                break
-            except apsw.Error:
-                logging.exception("Failed to create extension, retrying...")
-        if should_limit_source(repo_name, job_to_run):
-            rate_limit_fail_build(build_name)
-        else:
-            job = Job(build_name, repo_name, "Automatic build.")
-            dockergrader_queue.enqueue(job)
-        return ('', 204)
+        with DbCursor() as c:
+            c.execute("SELECT sid FROM users WHERE login = ?")
+            (db_sid,) = c.fetchone()
+
+            if sid != db_sid:
+                return ('Student ID in request does not match database', 400)
+
+            c.execute("INSERT INTO extensions (user, assignment, days) VALUES (?, ?, ?)", [login, assignment, days])
+            c.execute("SELECT last_insert_rowid()")
+            (extension_id,) = c.fetchone()
+
+        return ('', 201)
     except Exception:
         logging.exception("Error occurred while processing create extension request payload")
         abort(500)
