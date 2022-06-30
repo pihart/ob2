@@ -46,7 +46,7 @@ def extensions():
             (extension_id,) = c.fetchone()
             if config.mailer_enabled:
                 email_payload = create_email("extension_confirm", email, "[CS 162] Extension Request Reviewed",
-                        days=days, assignment=assignment)
+                        name=name, days=days, assignment=assignment)
                 mailer_job = mailer_queue.create(c, "send", email_payload)
                 mailer_queue.enqueue(mailer_job)
 
