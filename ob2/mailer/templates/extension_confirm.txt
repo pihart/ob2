@@ -3,7 +3,7 @@ Hi {{ name }},
 We have granted you a {{ days }} day extension on {{ assignment }}.
 The new deadline for this assignment is: {{ due_date }} Pacific Time.
 
-{% if len(message) > 0 %}
+{% if message|len > 1 %}
   Note: {{ message }}.
 {% endif %}
 
