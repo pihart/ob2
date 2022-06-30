@@ -27,12 +27,20 @@ def extensions():
         sid = payload["sid"]
         days = int(payload["days"])
         login = payload["login"]
-        assignment = payload["assignment"]
+        assignment_name = payload["assignment"]
 
         assert isinstance(sid, str)
         assert isinstance(days, int)
         assert isinstance(login, str)
-        assert isinstance(assignment, str)
+        assert isinstance(assignment_name, str)
+
+        assignment = None
+        for a in config.assignments:
+            if a.name == assignment_name:
+                assignment = a
+
+        if assignment is None:
+            return ('Assignment `%s` not found' % assignment_name, 400)
 
         with DbCursor() as c:
             c.execute("SELECT name, sid, email FROM users WHERE login = ?", [login])
@@ -41,12 +49,13 @@ def extensions():
             if sid != db_sid:
                 return ('Student ID in request does not match database', 400)
 
-            c.execute("INSERT INTO extensions (user, assignment, days) VALUES (?, ?, ?)", [login, assignment, days])
+            c.execute("INSERT INTO extensions (user, assignment, days) VALUES (?, ?, ?)", [login, assignment_name, days])
             c.execute("SELECT last_insert_rowid()")
             (extension_id,) = c.fetchone()
             if config.mailer_enabled:
-                email_payload = create_email("extension_confirm", email, "[CS 162] Extension Request Reviewed",
-                        name=name, days=days, assignment=assignment)
+                assignment = assignment.student_view(c, login)
+                email_payload = create_email("extension_confirm", email, "[CS 162] Extension Request Reviewed - %s" % assignment_name,
+                        name=name, days=days, assignment=assignment_name, due_date=assignment.due_date)
                 mailer_job = mailer_queue.create(c, "send", email_payload)
                 mailer_queue.enqueue(mailer_job)
 
