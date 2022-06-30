@@ -1,0 +1,10 @@
+Hi {{ name }},
+
+We have granted you a {{ days }} day extension on {{ assignment }}.
+
+If you had a previous extension on this assignment, the number above reflects the number of days you have from the original, unextended deadline.
+
+As always, please feel free to post on Piazza or email us if you have any questions.
+
+Best,
+Your friendly neighborhood course staff
