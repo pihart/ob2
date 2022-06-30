@@ -40,10 +40,16 @@ def extensions():
         assert isinstance(approve_days, int)
         assert isinstance(message, str)
 
+        def get_unit(days):
+            if days == 1:
+                return "day"
+            else:
+                return "days"
+
         if approve_days != days:
             message = (
-                "Your original request was for %d days, but we've approved an extension for %d days. Please email us or post on Piazza if this is a concern. %s"
-                % (days, approve_days, message)
+                "Your original request was for %d %s, but we've approved an extension for %d %s. %s"
+                % (days, get_unit(days), approve_days, get_unit(approve_days), message)
             )
 
         message = message.strip()
