@@ -6,7 +6,7 @@ on <strong>{{ assignment }}</strong>.
 The new deadline for this assignment is: <strong>{{ due_date }} Pacific Time</strong>.
 </p>
 
-{% if message|len > 1 %}
+{% if message|length > 1 %}
   <strong>Note:</strong> {{ message }}.
 {% endif %}
 
