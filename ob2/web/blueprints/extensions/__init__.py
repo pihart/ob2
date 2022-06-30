@@ -29,11 +29,20 @@ def extensions():
         days = int(payload["days"])
         login = payload["login"]
         assignment_name = payload["assignment"]
+        approve_days = int(payload.get("approve_days", days))
+        message = payload.get("message", "")
 
         assert isinstance(sid, str)
         assert isinstance(days, int)
         assert isinstance(login, str)
         assert isinstance(assignment_name, str)
+        assert isinstance(approve_days, int)
+        assert isinstance(message, str)
+
+        if approve_days != message:
+            message = "Your original request was for %d days, but we've approved an extension for %d days. Please email us or post on Piazza if this is a concern. %s" % message
+
+        message = message.strip()
 
         assignment = None
         for a in config.assignments:
@@ -50,14 +59,14 @@ def extensions():
             if sid != db_sid:
                 return ('Student ID in request does not match database', 400)
 
-            c.execute("INSERT INTO extensions (user, assignment, days) VALUES (?, ?, ?)", [login, assignment_name, days])
+            c.execute("INSERT INTO extensions (user, assignment, days) VALUES (?, ?, ?)", [login, assignment_name, approve_days])
             c.execute("SELECT last_insert_rowid()")
             (extension_id,) = c.fetchone()
             if config.mailer_enabled:
                 assignment = assignment.student_view(c, login)
                 due_date = parse_to_relative(assignment.due_date, 0, 0)
                 email_payload = create_email("extension_confirm", email, "[CS 162] Extension Request Reviewed - %s" % assignment_name,
-                        name=name, days=days, assignment=assignment_name, due_date=due_date)
+                        name=name, days=approve_days, assignment=assignment_name, due_date=due_date, message=message)
                 mailer_job = mailer_queue.create(c, "send", email_payload)
                 mailer_queue.enqueue(mailer_job)
 
