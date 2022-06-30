@@ -40,7 +40,7 @@ def extensions():
         assert isinstance(approve_days, int)
         assert isinstance(message, str)
 
-        if approve_days != message:
+        if approve_days != days:
             message = (
                 "Your original request was for %d days, but we've approved an extension for %d days. Please email us or post on Piazza if this is a concern. %s"
                 % (days, approve_days, message)
