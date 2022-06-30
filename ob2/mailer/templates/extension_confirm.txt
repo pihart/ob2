@@ -1,7 +1,7 @@
 Hi {{ name }},
 
 We have granted you a {{ days }} day extension on {{ assignment }}.
-The assignment is now due on {{ due_date }}.
+The new deadline for this assignment is: {{ due_date }} Pacific Time.
 
 As always, please feel free to post on Piazza or email us if you have any questions.
 
