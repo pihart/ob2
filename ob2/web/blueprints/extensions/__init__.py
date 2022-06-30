@@ -11,6 +11,7 @@ from ob2.util.github_api import get_commit_message, get_diff_file_list
 from ob2.util.hooks import apply_filters
 from ob2.util.job_limiter import rate_limit_fail_build, should_limit_source
 from ob2.mailer import create_email, mailer_queue
+from ob2.util.time import parse_to_relative
 
 blueprint = Blueprint("extensions", __name__, template_folder="templates")
 
@@ -54,8 +55,9 @@ def extensions():
             (extension_id,) = c.fetchone()
             if config.mailer_enabled:
                 assignment = assignment.student_view(c, login)
+                due_date = parse_to_relative(assignment.due_date, 0, 0)
                 email_payload = create_email("extension_confirm", email, "[CS 162] Extension Request Reviewed - %s" % assignment_name,
-                        name=name, days=days, assignment=assignment_name, due_date=assignment.due_date)
+                        name=name, days=days, assignment=assignment_name, due_date=due_date)
                 mailer_job = mailer_queue.create(c, "send", email_payload)
                 mailer_queue.enqueue(mailer_job)
 
