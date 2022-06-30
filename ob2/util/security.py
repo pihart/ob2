@@ -21,7 +21,7 @@ def get_request_validity():
     if "/extensions/" in request.path:
         agext_signature = request.headers.get("X-AgExt-Signature-256")
         if agext_signature:
-            payload_bytes = request.get_data()
+            payload_bytes = request.get_data(as_text=True).encode("utf-8")
             digest = hmac.new(base64.b64decode(config.agext_webhook_secret), payload_bytes, sha256).hexdigest()
             expected_signature = "sha256=%s" % digest
             return expected_signature == agext_signature
