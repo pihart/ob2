@@ -1,0 +1,16 @@
+<p>Hi {{ name }},</p>
+
+<p>
+We have granted you a <strong>{{ days }}</strong> day extension
+on <strong>{{ assignment }}</strong>.
+The new deadline for this assignment is: <strong>{{ due_date }} Pacific Time</strong>.
+</p>
+
+{% if message|length > 1 %}
+  <strong>Note:</strong> {{ message }}
+{% endif %}
+
+<p>As always, please feel free to post on Piazza or email us if you have any questions.</p>
+
+<p>Best,<br />
+Your friendly neighborhood course staff</p>

@@ -1,9 +1,10 @@
+import base64
 import hmac
 import secrets
 import string
 from flask import abort, request, session
 from functools import wraps
-from hashlib import sha1
+from hashlib import sha1, sha256
 
 import ob2.config as config
 
@@ -16,6 +17,17 @@ def get_request_validity():
     # Public API
     if "/api/" in request.path:
         return True
+
+    if "/extensions/" in request.path:
+        agext_signature = request.headers.get("X-AgExt-Signature-256")
+        if agext_signature:
+            payload_bytes = request.get_data(as_text=True).encode("utf-8")
+            digest = hmac.new(base64.b64decode(config.agext_webhook_secret), payload_bytes, sha256).hexdigest()
+            expected_signature = "sha256=%s" % digest
+            return expected_signature == agext_signature
+        else:
+            return False
+
     # GitHub signature will suffice for CSRF check
     github_signature = request.headers.get("X-Hub-Signature")
     if github_signature:

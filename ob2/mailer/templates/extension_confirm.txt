@@ -1,0 +1,13 @@
+Hi {{ name }},
+
+We have granted you a {{ days }} day extension on {{ assignment }}.
+The new deadline for this assignment is: {{ due_date }} Pacific Time.
+
+{% if message|length > 1 %}
+  Note: {{ message }}
+{% endif %}
+
+As always, please feel free to post on Piazza or email us if you have any questions.
+
+Best,
+Your friendly neighborhood course staff
