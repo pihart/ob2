@@ -35,7 +35,7 @@ def send_template(*args, **kwargs):
 
 
 def create_email(_template_name, _to, _subject, _from=None, _attachments=[],
-                 _message_id=None, **kwargs):
+                 _message_id=None, _cc=[], **kwargs):
     """
     Prepares an email to be sent by the email queue background thread. Templates are taken from
     templates/*.html and templates/*.txt. Both a HTML and a plain text template is expected to be
@@ -49,6 +49,7 @@ def create_email(_template_name, _to, _subject, _from=None, _attachments=[],
                             supported right now)
         _message_id      -- If this message is a REPLY, then specify the message ID(s) of the
                             previous messages in this chain.
+        _cc              -- A list of email addresses to CC on this email
 
     Returns an opaque object (spoiler: it's a tuple) which should be passed directly to
     mailer_queue.enqueue().
@@ -62,6 +63,8 @@ def create_email(_template_name, _to, _subject, _from=None, _attachments=[],
     msg['Subject'] = _subject
     msg['From'] = _from
     msg['To'] = _to
+    if len(_cc) > 0:
+        msg['CC'] = ",".join(_cc)
     msg['Message-Id'] = make_msgid()
     if _message_id:
         msg['References'] = _message_id
@@ -80,7 +83,8 @@ def create_email(_template_name, _to, _subject, _from=None, _attachments=[],
             msg.attach(attachment)
         else:
             raise ValueError("Unsupported attachment type: %s" % attachment_type)
-    return _from, _to, msg.as_string()
+    to_addrs = [_to] + _cc
+    return _from, to_addrs, msg.as_string()
 
 
 def get_jinja_environment():
