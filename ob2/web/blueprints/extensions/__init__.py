@@ -76,12 +76,17 @@ def extensions():
             c.execute("SELECT last_insert_rowid()")
             (extension_id,) = c.fetchone()
             if config.mailer_enabled:
+                try:
+                    _cc = config.agext_cc_emails
+                except AttributeError:
+                    _cc = []
                 assignment = assignment.student_view(c, login)
                 due_date = parse_to_relative(assignment.due_date, 0, 0)
                 email_payload = create_email(
                     "extension_confirm",
                     email,
                     "[CS 162] Extension Request Reviewed - %s" % assignment_name,
+                    _cc=_cc,
                     name=name,
                     days=approve_days,
                     assignment=assignment_name,
