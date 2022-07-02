@@ -67,6 +67,7 @@ class Assignment(object):
     def student_view(self, c, login):
         c.execute("SELECT days FROM extensions WHERE user = ? AND assignment = ?", [login, self.name])
         extensions = c.fetchall()
+
         max_days = 0
         for (days,) in extensions:
             max_days = max(max_days, int(days))
@@ -83,6 +84,15 @@ class Assignment(object):
         exceptions["due_date"] = due_date
         exceptions["end_auto_building"] = end_auto_building
         exceptions["cannot_build_after"] = cannot_build_after
+
+        c.execute("SELECT super FROM users WHERE login = ?", [login])
+        admin = c.fetchone()
+        admin = admin[0] if admin is not None else 0
+
+        if admin == 1:
+            admin_preview_time = timedelta(days=365)
+            exceptions["not_visible_before"] = parse_time(self.not_visible_before) - admin_preview_time
+            exceptions["start_auto_building"] = parse_time(self.start_auto_building) - admin_preview_time
 
         return AssignmentStudentView(login, self, exceptions=exceptions)
 
