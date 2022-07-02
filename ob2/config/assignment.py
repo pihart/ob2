@@ -86,8 +86,8 @@ class Assignment(object):
         exceptions["cannot_build_after"] = cannot_build_after
 
         c.execute("SELECT super FROM users WHERE login = ?", [login])
-        admin = c.fetchall()
-        admin = admin[0][0] if len(admin) > 0 else 0
+        admin = c.fetchone()
+        admin = admin[0] if admin is not None else 0
 
         if admin == 1:
             admin_preview_time = timedelta(days=365)
