@@ -85,11 +85,7 @@ class Assignment(object):
         exceptions["end_auto_building"] = end_auto_building
         exceptions["cannot_build_after"] = cannot_build_after
 
-        c.execute("SELECT super FROM users WHERE login = ?", [login])
-        admin = c.fetchone()
-        admin = admin[0] if admin is not None else 0
-
-        if admin == 1:
+        if login in self.staff_logins:
             admin_preview_time = timedelta(days=365)
             exceptions["not_visible_before"] = parse_time(self.not_visible_before) - admin_preview_time
             exceptions["start_auto_building"] = parse_time(self.start_auto_building) - admin_preview_time

@@ -43,6 +43,7 @@ class _ConfigModule(object):
         except IOError:
             LOG.info("  -> No config.yaml found (skipping)")
         else:
+            staff_logins = config_dict.get("staff_account_logins", [])
             for key, value in config_dict.items():
                 # We support the special suffixes "_APPEND" and "_UPDATE" for advanced users who
                 # need to modify (rather than replace) a configuration value.
@@ -58,7 +59,7 @@ class _ConfigModule(object):
                     # The "assignments" dictionary is special. We turn the assignments into objects
                     # first, because they're so important and so often used.
                     assert isinstance(value, list)
-                    value = [Assignment(**kwargs) for kwargs in value]
+                    value = [Assignment(**kwargs, staff_logins=staff_logins) for kwargs in value]
                 elif key.endswith("_path"):
                     # Configuration options that end in "_path" are treated specially.
                     # Paths are relative to the config directory root.
