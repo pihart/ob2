@@ -34,7 +34,7 @@ class DockerClient(object):
         """
         host_config = {"mem_limit": mem_limit,
                        "memswap_limit": memswap_limit,
-                       "network_mode": "none",
+                       "network_mode": "bridge",
                        "ulimits": [Ulimit(name="nproc", soft=max_procs, hard=max_procs),
                                    Ulimit(name="nofile", soft=max_files, hard=max_files),
                                    Ulimit(name="nice", soft=5, hard=5)]}
