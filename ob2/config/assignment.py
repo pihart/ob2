@@ -37,6 +37,9 @@ class Assignment(object):
             # Ignore exceptions in config.yaml
             if key == "exceptions":
                 continue
+            elif key == "staff_logins":
+                self.staff_logins = value
+                continue
             args[self._index_by_key[key]] = value
         self.args = args
 
@@ -62,6 +65,8 @@ class Assignment(object):
                     cannot_build_after)
 
     def __getattr__(self, key):
+        if key == "staff_logins":
+            return self.staff_logins
         return self.args[self._index_by_key[key]]
 
     def student_view(self, c, login):
