@@ -164,6 +164,7 @@ def assignments_one(name):
                             assignment.manual_grading) + grade + (rank,) + stats + (stddev,))
         template_common = _template_common(c)
     return render_template("dashboard/assignments_one.html",
+                           user_id=user_id,
                            assignment_info=assignment_info,
                            builds=builds,
                            repos=repos,
@@ -291,6 +292,7 @@ def builds_one_stop(name):
 @_require_login
 def build_now():
     job_name = request.form.get("f_job_name")
+    student = request.form.get("f_student")
     repo = request.form.get("f_repo")
     graded = False if "f_graded" in request.form and request.form.get("f_graded") == "False" else True
     assignment = get_assignment_by_name(job_name)
@@ -298,7 +300,7 @@ def build_now():
         abort(400)
 
     with DbCursor() as c:
-        assignment = assignment.student_view(c, repo)
+        assignment = assignment.student_view(c, student)
         if assignment.manual_grading:
             abort(400)
         student = _get_student(c)
