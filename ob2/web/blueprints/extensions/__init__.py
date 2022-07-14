@@ -29,6 +29,7 @@ def extensions():
         sid = payload["sid"]
         days = int(payload["days"])
         login = payload["login"]
+        is_group = "is_group" in payload
         assignment_name = payload["assignment"]
         approve_days = int(payload.get("approve_days", days))
         message = payload.get("message", "")
@@ -63,11 +64,18 @@ def extensions():
             return ("Assignment `%s` not found" % assignment_name, 400)
 
         with DbCursor() as c:
-            c.execute("SELECT name, sid, email FROM users WHERE login = ?", [login])
-            (name, db_sid, email) = c.fetchone()
+            if not is_group:
+                c.execute("SELECT sid FROM users WHERE login = ?", [login])
+                (name, db_sid, email) = c.fetchone()
 
-            if sid != db_sid:
-                return ("Student ID in request does not match database", 400)
+                if sid != db_sid:
+                    return ("Student ID in request does not match database", 400)
+            else:
+                c.execute("SELECT sid FROM users WHERE login = ?", [login])
+                sids = c.fetchall()
+
+                if (sid) not in sids:
+                    return ("Student ID in request does not match database", 400)
 
             c.execute(
                 "INSERT INTO extensions (user, assignment, days) VALUES (?, ?, ?)",
