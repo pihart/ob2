@@ -164,7 +164,7 @@ def assignments_one(name):
                             assignment.manual_grading) + grade + (rank,) + stats + (stddev,))
         template_common = _template_common(c)
     return render_template("dashboard/assignments_one.html",
-                           login=login,
+                           user_id=user_id,
                            assignment_info=assignment_info,
                            builds=builds,
                            repos=repos,
