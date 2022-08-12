@@ -83,7 +83,7 @@ def status_bar(score, full_score=1, size=100):
                             width: %dpx;
                             height: 2px;
                             background: #AA4400;"></span>''' +
-            '''</span>''') % (size, round(fraction * size), round((1 - fraction) * size))
+            '''</span>''') % (size, round(fraction * size), size - round(fraction * size))
 
 
 def slip_unit_name(n=0):
